@@ -6,6 +6,12 @@ import random
 import time
 from kmeans_pytorch import kmeans
 
+# C : クラス数
+# K : 混合ガウス分布の数
+# N : データ数 
+# A : データの次元数
+# ans_K : 答えとなる混合ガウス分布の数 
+# split_num : EMアルゴリズムを行う際、何分割ごとに行うかの値
 C = 2
 K = 2
 N = 500
@@ -19,17 +25,20 @@ split_num = 10
 use_cuda = torch.cuda.is_available()
 dtype = torch.float32 if use_cuda else torch.float64
 
+# 答えとなる混合ガウス分布の定義
+
+# 各正規分布の混合の比率の初期化
 pi_ans = torch.rand(C, ans_K)
 pi_ans = (pi_ans/(torch.sum(pi_ans, dim=1).expand(ans_K, C).T))
 
+# 各正規分布の平均の初期化
 Ave_ans = torch.rand(C, ans_K, A) * 10
 
+# 各正規分布の共分散行列の初期化
 Cov_ans = torch.eye(A).expand(C, ans_K, A, A).clone() + torch.rand(1)
 
+# 上記で設定した値に従ってデータの生成を行う
 data_not_shuffle = torch.zeros(C, N//C, A)
-
-
-# 共分散行列作成->piに従ってデータの生成を行う
 for c in range(C):
     data_count = 0
     for k in range(ans_K):
@@ -39,20 +48,17 @@ for c in range(C):
         for i in range(data_num):
             data_not_shuffle[c][data_count] = MultiVariate.sample()
             data_count += 1
+    # データ数/split_numが割り切れなかったとき、余りのデータを追加する
     while data_count != (N//C):
-        print(data_count)
-        print("data plus!!")
         data_not_shuffle[c][data_count] = MultiVariate.sample()
         data_count += 1
-
 data = data_not_shuffle.reshape(N, A)
 
+# データをくっつける
 labels = torch.zeros(N//C, 1)
-
 for c in range(C-1):
     temp_labels = torch.ones(N//C, 1) * (c + 1)
     labels = torch.cat((labels, temp_labels), 0)
-
 tensor_label_all = torch.cat((data, labels), 1)
 
 idx = torch.randperm(N)
