@@ -268,8 +268,6 @@ def main():
     array_of_bestacc.append(best_prec1)
     print(array_of_bestacc)
     print("Average accuracy", sum(val_acc[len(val_acc) - 10:]) / 10)
-    # val_acc.append(sum(val_acc[len(val_acc) - 10:]) / 10)
-    # np.savetxt(val_acc, np.array(val_acc))
     np.savetxt(accuracy_file, np.array(val_acc))
 
 
@@ -299,8 +297,6 @@ def train(train_loader, model, fc, criterion, optimizer, epoch):
         # compute output
         loss, output = criterion(model, fc, input_var, target_var, ratio)
 
-        # ? なぜlossとoutputを出力している？片方だけでいいのでは？
-        # * outputとtargetを比較して正答率を計算するために使っている
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
         losses.update(loss.data.item(), x.size(0))

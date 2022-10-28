@@ -19,8 +19,6 @@ for i in range(NumCluster):
     print(max_num)
     f.close()
 
-# print(AccEachCluster)
-
 for i in range(NumCluster):
     if i == 0:
         label_name = "ISDA"
