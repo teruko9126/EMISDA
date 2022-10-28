@@ -7,6 +7,7 @@ ISDAにEMアルゴリズムを組み合わせました。
 - matplotlib
 - kmeans_pytorch
 - tqdm
+- cuda
 
 ## Dataset
 - cifar10
