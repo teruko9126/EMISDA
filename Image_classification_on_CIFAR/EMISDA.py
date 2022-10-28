@@ -3,6 +3,8 @@ import torch.nn as nn
 import numpy as np
 import time
 from kmeans_pytorch import kmeans
+
+
 class EstimatorCV_EM():
     def __init__(self, input_size, class_num, num_cluster,  max_iter=50):
 
@@ -104,7 +106,6 @@ class EstimatorCV_EM():
                 flag_end = True
                 break
             prev_elbo = elbo
-            print(i)
 
         if not flag_end:
             self.last_iter = self.max_iter
@@ -114,7 +115,7 @@ class EstimatorCV_EM():
         k = self.num_cluster
         d = self.input_size
 
-        label = label.reshape(n)
+        label = label.reshape(n).cpu()
         pi = self.pi[label].cuda()
         mu = self.mu[label].cuda()
         sigma = self.sigma[label].cuda()
@@ -250,7 +251,7 @@ class ISDALoss_EM(nn.Module):
         C = self.class_num
         A = features.size(1)
         K = self.K
-
+        cv_matrix = cv_matrix.cuda()
 
         weight_m = list(fc.parameters())[0]
 
@@ -263,7 +264,7 @@ class ISDALoss_EM(nn.Module):
 
         q = self.estimator._expect(features, labels)
 
-        cv_matrix = cv_matrix[labels].cuda().to(torch.float64)
+        cv_matrix = cv_matrix[labels].to(torch.float64)
 
         q_max = torch.max(q, 1)
         onehot_q = torch.nn.functional.one_hot(

@@ -237,8 +237,8 @@ def main():
         # train for one epoch
         train(train_loader, model, fc, isda_criterion, optimizer, epoch)
 
-        print(isda_criterion.estimator.pi)
-        isda_criterion.adjust_em(model, train_loader, epoch)
+        isda_criterion.adjust_em(
+            model, train_loader, epoch, reset_each_epoch=False)
 
         # evaluate on validation set
         prec1 = validate(val_loader, model, fc, ce_criterion, epoch)

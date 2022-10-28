@@ -241,8 +241,8 @@ class GaussianMixture:
             self.mu = torch.einsum("ckd,ck->ckd", mu, nk)
 
             elbo = elbo.cpu()
-            # if A == 2:
-            #     self.plot()
+            if A == 2:
+                self.plot()
             if np.allclose(elbo, prev_elbo):
                 self.last_iter = i + 1
                 flag_end = True
